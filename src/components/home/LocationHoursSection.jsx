@@ -1,179 +1,168 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { MapPinIcon, ClockIcon, PhoneIcon, NavigationIcon, ExternalLinkIcon } from '../common/Icons';
 import { BUSINESS_INFO, isOpenNow } from '../../data/businessData';
-import { useCart } from '../../context/CartContext';
 
-export default function LocationHoursSection({ onOpenWizard }) {
-  const { openCustomizer } = useCart();
-  const [copied, setCopied] = useState(false);
-  const shopOpen = isOpenNow();
-
-  const currentDayIndex = new Date().getDay();
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const currentDayName = dayNames[currentDayIndex];
-
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(BUSINESS_INFO.address.formatted);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
-  const googleMapsPlaceUrl = "https://www.google.com/maps/place/Lowry's+Crab+Shack/@39.1365999,-77.6747929,17z/data=!3m1!4b1!4m6!3m5!1s0x89b617b07c244799:0xe54d2e5a40a5a4fa!8m2!3d39.1365958!4d-77.6726042";
+export default function LocationHoursSection() {
+  const openStatus = isOpenNow();
 
   return (
-    <section id="location" className="py-20 sm:py-28 bg-[#fdfbf7] border-t border-slate-200 relative overflow-hidden" aria-labelledby="location-heading">
-      {/* Subtle Background Accent */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-crab-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 relative">
+    <section id="visit" className="py-24 sm:py-32 bg-cream-100 dark:bg-midnight-pure border-t border-restaurant-brown/10 dark:border-midnight-border transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16 space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-xs text-xs font-mono font-bold uppercase tracking-widest text-crab-700">
-            <span className="w-2 h-2 rounded-full bg-crab-600" />
-            <span>// 05 LOCATION & OPERATING HOURS</span>
+        <div className="max-w-3xl mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-restaurant-red/10 border border-restaurant-red/20 text-restaurant-red text-xs font-mono font-semibold tracking-wider uppercase mb-4">
+            <MapPinIcon className="w-4 h-4" />
+            <span>// 08 CRAB SHACK LOCATION & PATIO</span>
           </div>
 
-          <h2 id="location-heading" className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-slate-900 tracking-tight">
-            Find Us in Hamilton, VA
+          <h2 className="font-serif font-bold text-4xl sm:text-6xl lg:text-7xl text-restaurant-brown dark:text-cream-50 tracking-tight leading-[1.04]">
+            RIGHT HERE IN <br />
+            <span className="italic font-light text-restaurant-red">HAMILTON, VA.</span>
           </h2>
-
-          <p className="text-slate-600 text-base sm:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            Located along historic W Colonial Highway. Open year-round with cozy wood-paneled indoor seating and shaded pet-friendly outdoor picnic tables.
+          <p className="mt-4 text-base sm:text-lg text-restaurant-ink/75 dark:text-cream-200/75 font-sans">
+            Located at 420 W Colonial Hwy on the historic route between Hamilton and Purcellville. Shaded outdoor picnic pavilion, dog-friendly tables, and ample parking.
           </p>
         </div>
 
-        {/* TOP STATUS & QUICK ACTIONS BAR */}
-        <div className="card-thick p-5 sm:p-6 mb-10 flex flex-wrap items-center justify-between gap-4">
-          {/* Status Indicator */}
-          <div className="flex items-center space-x-4">
-            <div className="relative flex items-center justify-center">
-              <span className={`w-3.5 h-3.5 rounded-full ${shopOpen ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-              <span className={`absolute w-3.5 h-3.5 rounded-full ${shopOpen ? 'bg-emerald-500 animate-ping opacity-75' : 'bg-amber-500'}`} />
-            </div>
-            <div className="text-left">
-              <div className="flex items-center space-x-2">
-                <span className="font-serif font-bold text-base sm:text-lg text-slate-900">
-                  {shopOpen ? 'Open for Steamed Crabs & Dining' : 'Currently Closed'}
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-800 font-mono font-semibold">
-                  Today is {currentDayName}
-                </span>
+        {/* 2-Column Location & Operating Hours Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Column: Hours & Contact Cards */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            {/* Live Status Card */}
+            <div className="card-thick p-7">
+              <div className="flex items-center justify-between pb-5 border-b border-restaurant-brown/10 dark:border-midnight-border">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-cream-200 dark:bg-midnight-card flex items-center justify-center text-restaurant-brown dark:text-cream-50">
+                    <ClockIcon className="w-5 h-5 text-restaurant-red" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-restaurant-brown dark:text-cream-50">
+                      Operating Hours
+                    </h3>
+                    <div className="flex items-center gap-1.5 text-xs font-mono">
+                      <span className={`w-2 h-2 rounded-full ${openStatus ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                      <span className={`font-semibold ${openStatus ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        {openStatus ? 'Open for Service Right Now' : 'Closed Now • Wed-Fri 4PM, Sat-Sun 12PM'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-slate-600 mt-0.5">
-                {currentDayName === 'Monday' || currentDayName === 'Tuesday'
-                  ? 'Closed Mondays & Tuesdays for fresh fleet catch sourcing & prep.'
-                  : currentDayName === 'Saturday' || currentDayName === 'Sunday'
-                  ? 'Weekend All-Day Hours: 12:00 PM – 8:00 PM'
-                  : 'Wednesday – Friday Hours: 4:00 PM – 8:00 PM'}
-              </p>
+
+              {/* Hours Schedule */}
+              <div className="divide-y divide-restaurant-brown/5 dark:divide-midnight-border mt-4 text-xs font-mono">
+                {BUSINESS_INFO.hours.map((h, i) => (
+                  <div key={i} className="py-2.5 flex items-center justify-between">
+                    <span className="font-semibold text-restaurant-brown dark:text-cream-100">
+                      {h.day}
+                    </span>
+                    <div className="text-right">
+                      <span className="text-restaurant-ink/80 dark:text-cream-300">
+                        {h.open === 'Closed' ? 'Closed' : `${h.open} – ${h.close}`}
+                      </span>
+                      {h.note && (
+                        <span className="block text-[10px] text-restaurant-red font-sans">
+                          {h.note}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={handleCopyAddress}
-              className="px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 transition active:scale-95 cursor-pointer"
-            >
-              {copied ? 'Address Copied!' : 'Copy Address'}
-            </button>
-
-            <a
-              href={`tel:${BUSINESS_INFO.phone.replace(/[^0-9]/g, '')}`}
-              className="px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 transition active:scale-95"
-            >
-              Call: {BUSINESS_INFO.phone}
-            </a>
-
-            <button
-              type="button"
-              onClick={() => openCustomizer({
-                name: 'Steamed Chesapeake Blue Crabs',
-                price: '$42.00',
-                image: '/images/outdoor-picnic.jpg',
-                badge: 'Live Steamed Crabs'
-              })}
-              className="px-6 py-2.5 rounded-full bg-crab-600 hover:bg-crab-700 text-white text-xs font-bold uppercase tracking-wider transition shadow-sm active:scale-95 cursor-pointer"
-            >
-              Order Online (0% Fees)
-            </button>
-          </div>
-        </div>
-
-        {/* GIGANTIC INTERACTIVE GOOGLE MAP CONTAINER */}
-        <div className="card-thick overflow-hidden shadow-2xl transition">
-          {/* Map Top Bar */}
-          <div className="px-6 py-4 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center space-x-3.5">
-              <img 
-                src="/images/outdoor-picnic.jpg" 
-                alt="Lowrys Crab Shack Picnic Grounds" 
-                className="w-11 h-11 rounded-2xl object-cover border-2 border-crab-500 shadow-xs"
-              />
-              <div className="text-left">
-                <h3 className="font-serif font-bold text-base sm:text-lg text-slate-900 leading-snug">
-                  Lowry's Crab Shack
-                </h3>
-                <p className="text-xs text-slate-600 font-mono">
-                  420 W Colonial Highway, Hamilton, VA 20158 (Free Parking On-Site)
+            {/* Address & Quick Phone Card */}
+            <div className="card-thick p-7 space-y-6">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-restaurant-red font-semibold">
+                  Shack Address
+                </span>
+                <p className="font-serif font-bold text-xl text-restaurant-brown dark:text-cream-50 mt-1">
+                  420 W Colonial Hwy
+                </p>
+                <p className="text-sm font-sans text-restaurant-ink/70 dark:text-cream-300">
+                  Hamilton, VA 20158
+                </p>
+                <p className="text-xs text-restaurant-brown/60 dark:text-cream-400 mt-1 font-mono">
+                  (Route 7 Business • Hamilton / Purcellville Border)
                 </p>
               </div>
+
+              <div className="pt-4 border-t border-restaurant-brown/10 dark:border-midnight-border flex flex-col sm:flex-row gap-3">
+                <a 
+                  href={`tel:${BUSINESS_INFO.phone.replace(/[^0-9]/g, '')}`}
+                  className="btn-primary flex-1 !py-3 text-xs justify-center"
+                >
+                  <PhoneIcon className="w-4 h-4" />
+                  <span>Call (540) 338-2348</span>
+                </a>
+
+                <a 
+                  href="https://www.google.com/maps/dir/?api=1&destination=420+W+Colonial+Hwy,+Hamilton,+VA+20158"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn-secondary flex-1 !py-3 text-xs justify-center"
+                >
+                  <NavigationIcon className="w-4 h-4 text-restaurant-red" />
+                  <span>Get Directions</span>
+                </a>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <a
-                href={googleMapsPlaceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-full bg-crab-600 hover:bg-crab-700 text-white text-xs font-bold transition shadow-xs flex items-center space-x-1.5"
-              >
-                <span>Open in Google Maps</span>
-                <span>↗</span>
-              </a>
-
-              <a
-                href="https://www.google.com/maps/dir/?api=1&destination=Lowry's+Crab+Shack+420+W+Colonial+Hwy+Hamilton+VA+20158"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold transition flex items-center space-x-1.5"
-              >
-                <span>GPS Directions</span>
-                <span>↗</span>
-              </a>
-            </div>
           </div>
 
-          {/* Huge Map Frame */}
-          <div className="relative w-full h-[460px] sm:h-[540px] lg:h-[600px] bg-slate-100">
-            <iframe
-              title="Lowry's Crab Shack Google Map Location in Hamilton, VA"
-              src={BUSINESS_INFO.googleMapsEmbedUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="w-full h-full"
-            />
-
-            {/* Floating Bottom Info Pill inside the Map */}
-            <div className="absolute bottom-5 left-5 right-5 sm:right-auto z-10 bg-white/95 backdrop-blur-md border-2 border-slate-200 rounded-2xl p-4 shadow-xl max-w-md text-left">
-              <div className="flex items-start space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-crab-600 text-white flex items-center justify-center shrink-0 font-serif font-bold text-xs">
-                  LC
-                </div>
+          {/* Right Column: REAL Exterior Building Photo & Working Google Map Embed */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* REAL Building Exterior Photo */}
+            <div className="rounded-3xl overflow-hidden shadow-thick border-2 border-restaurant-brown/10 dark:border-midnight-border group relative aspect-[16/9]">
+              <img 
+                src="/images/shack-exterior.jpg" 
+                alt="Lowry's Crab Shack historic building and outdoor picnic patio at 420 W Colonial Hwy in Hamilton, Virginia" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
                 <div>
-                  <span className="font-serif font-bold text-sm text-slate-900 block">
-                    Lowry's Crab Shack Grounds
+                  <span className="text-xs font-mono uppercase tracking-wider text-restaurant-gold font-bold">
+                    The Iconic Blue Crab Shack & Pavilion
                   </span>
-                  <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                    Dog-friendly picnic tables, child play area, pet water bowls, outdoor sink & motorcycle parking.
-                  </p>
+                  <h3 className="font-serif font-bold text-xl sm:text-2xl text-cream-50">
+                    420 W Colonial Hwy, Hamilton, Virginia
+                  </h3>
                 </div>
               </div>
             </div>
+
+            {/* Verified Working Google Map Embed */}
+            <div className="rounded-3xl overflow-hidden shadow-thick border-2 border-restaurant-brown/10 dark:border-midnight-border h-72 sm:h-80 relative bg-cream-200 dark:bg-midnight">
+              <iframe 
+                src="https://maps.google.com/maps?q=420+W+Colonial+Hwy,+Hamilton,+VA+20158&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen="" 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Lowry's Crab Shack Map Location"
+                className="w-full h-full filter contrast-[0.95]"
+              />
+              <a 
+                href="https://www.google.com/maps/dir/?api=1&destination=420+W+Colonial+Hwy,+Hamilton,+VA+20158"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute bottom-4 right-4 bg-cream-50/95 dark:bg-midnight-pure/95 text-restaurant-brown dark:text-cream-100 text-xs font-mono px-4 py-2 rounded-full shadow-lg border border-restaurant-brown/15 flex items-center gap-2 hover:bg-restaurant-red hover:text-cream-50 transition-colors"
+              >
+                <span>Open in Google Maps App</span>
+                <ExternalLinkIcon className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
           </div>
+
         </div>
 
       </div>

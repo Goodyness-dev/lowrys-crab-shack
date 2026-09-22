@@ -3,79 +3,112 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+    background-color: #181614 !important;
+  }
+
   body {
-    @apply bg-[#fdfbf7] text-slate-900 font-sans antialiased selection:bg-crab-600 selection:text-white;
+    @apply bg-cream-200 text-restaurant-ink antialiased overflow-x-hidden transition-colors duration-200;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  h1, h2, h3, .font-serif-heading {
-    font-family: 'Playfair Display', Georgia, serif;
-    letter-spacing: -0.02em;
-    font-feature-settings: "liga" 1, "dlig" 1;
+  html.dark body {
+    background-color: #181614 !important;
+    color: #FFFDF8 !important;
   }
 
-  .font-display-title {
-    font-family: 'Oswald', 'Montserrat', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  /* Custom Clean Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #FAF6ED;
+  }
+  html.dark ::-webkit-scrollbar-track {
+    background: #181614;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #E7DBC7;
+    border-radius: 9999px;
+  }
+  html.dark ::-webkit-scrollbar-thumb {
+    background: #3D342E;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A92E26;
   }
 }
 
-/* Thick & Alive Design System: Crisp White Cards with Marine & Crab Accents */
-.card-thick {
-  background: #ffffff;
-  border: 2px solid rgba(226, 232, 240, 0.95);
-  border-radius: 1.75rem;
-  box-shadow: 
-    0 20px 45px -12px rgba(12, 74, 110, 0.10),
-    0 8px 18px -4px rgba(220, 38, 38, 0.05);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+@layer components {
+  .card-thick {
+    @apply bg-cream-50 dark:bg-midnight-card border-2 border-restaurant-brown/10 dark:border-midnight-border rounded-3xl shadow-thick transition-all duration-300;
+  }
+
+  .card-thick-hover {
+    @apply bg-cream-50 dark:bg-midnight-card border-2 border-restaurant-brown/10 dark:border-midnight-border rounded-3xl shadow-thick hover:shadow-thick-hover hover:-translate-y-1.5 transition-all duration-300;
+  }
+
+  .card-thick-red {
+    @apply bg-restaurant-red text-cream-50 border-2 border-restaurant-redHover rounded-3xl shadow-thick-red;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-restaurant-red hover:bg-restaurant-redHover text-cream-50 font-semibold tracking-wide shadow-thick transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cream-50/90 dark:bg-midnight-card hover:bg-white text-restaurant-brown dark:text-cream-100 border-2 border-restaurant-brown/20 dark:border-midnight-border font-semibold tracking-wide shadow-sm hover:shadow-thick transition-all duration-200 hover:-translate-y-0.5;
+  }
 }
 
-.card-thick-hover {
-  background: #ffffff;
-  border: 2px solid rgba(226, 232, 240, 0.95);
-  border-radius: 1.75rem;
-  box-shadow: 
-    0 20px 45px -12px rgba(12, 74, 110, 0.10),
-    0 8px 18px -4px rgba(220, 38, 38, 0.05);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Atmospheric Steam Animation */
+@keyframes steamDrift {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.8);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.6;
+  }
+  75% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-80px) translateX(25px) scale(1.6);
+    opacity: 0;
+  }
 }
 
-.card-thick-hover:hover {
-  transform: translateY(-5px);
-  border-color: rgba(220, 38, 38, 0.6);
-  box-shadow: 
-    0 30px 65px -14px rgba(12, 74, 110, 0.18),
-    0 12px 24px -6px rgba(220, 38, 38, 0.14);
+.animate-steam-1 {
+  animation: steamDrift 4s ease-out infinite;
 }
 
-/* Image Zoom and Clip Reveal */
-.img-hover-zoom {
-  overflow: hidden;
+.animate-steam-2 {
+  animation: steamDrift 4.8s ease-out infinite 1.2s;
 }
 
-.img-hover-zoom img {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+.animate-steam-3 {
+  animation: steamDrift 5.5s ease-out infinite 2.4s;
 }
 
-.img-hover-zoom:hover img {
-  transform: scale(1.06);
+/* Ken Burns Subtle Pan Drift */
+@keyframes kenBurnsSlow {
+  0% {
+    transform: scale(1.0) translate(0%, 0%);
+  }
+  50% {
+    transform: scale(1.04) translate(-1%, -0.5%);
+  }
+  100% {
+    transform: scale(1.0) translate(0%, 0%);
+  }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f0fdfa;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #99f6e4;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #5eead4;
+.animate-ken-burns {
+  animation: kenBurnsSlow 24s ease-in-out infinite alternate;
 }

@@ -1,169 +1,123 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { imageManifest } from '../../data/imageManifest';
-import { BUSINESS_INFO } from '../../data/businessData';
-import { useCart } from '../../context/CartContext';
-import { gsap } from 'gsap';
+import React, { useRef, useEffect } from 'react';
+import { ArrowRightIcon, MapPinIcon, CoffeeIcon, PhoneIcon } from '../common/Icons';
+import { BUSINESS_INFO, isOpenNow } from '../../data/businessData';
 
-export default function Hero({ onOpenWizard }) {
-  const { openCustomizer } = useCart();
-  const [slideIndex, setSlideIndex] = useState(0);
-  const heroTextRef = useRef(null);
+export default function Hero({ onOpenMenu, onOpenOrder }) {
+  const videoRef = useRef(null);
+  const openStatus = isOpenNow();
 
-  const heroSlides = [
-    {
-      image: imageManifest.hero.banner,
-      headlineTop: "Fresh Chesapeake",
-      headlineBottom: "Steamed Blue Crabs",
-      subtitle: "Hamilton, VA • Historic W Colonial Hwy",
-      tagline: "Live blue crabs steamed piping hot to order with apple cider vinegar, beer & heavy Old Bay.",
-      alt: "Piping hot steamed blue crabs at Lowrys Crab Shack"
-    },
-    {
-      image: imageManifest.features.chicken,
-      headlineTop: "4x Voted #1",
-      headlineBottom: "Fried Chicken",
-      subtitle: "Loudoun Times-Mirror Winner 2021-2024",
-      tagline: "Fresh-to-order hand-breaded golden fried chicken, family buckets & Southern scratch sides.",
-      alt: "Award-winning fried chicken at Lowrys Crab Shack"
-    },
-    {
-      image: imageManifest.features.patio,
-      headlineTop: "Casual & Dog-Friendly",
-      headlineBottom: "Outdoor Picnic Patio",
-      subtitle: "Hamilton Roadside Tradition Since 2007",
-      tagline: "Shaded outdoor tables, outdoor crab wash sink, child play area & dedicated biker parking.",
-      alt: "Pet-friendly outdoor picnic pavilion at Lowrys Crab Shack"
-    }
-  ];
-
-  const currentSlide = heroSlides[slideIndex];
-
-  // GSAP animation on slide change
   useEffect(() => {
-    if (heroTextRef.current) {
-      gsap.fromTo(heroTextRef.current.children,
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out' }
-      );
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Autoplay policy fallback
+      });
     }
-  }, [slideIndex]);
-
-  const handlePrev = () => {
-    setSlideIndex((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setSlideIndex((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1));
-  };
+  }, []);
 
   return (
-    <section className="relative pt-2 pb-10 sm:pb-16 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex items-center justify-start overflow-hidden bg-restaurant-ink">
       
-      {/* Outer Banner Wrapper with Flanking Arrows */}
-      <div className="relative flex items-center justify-center">
+      {/* Background Cinematic Video & Poster Layer */}
+      <div className="absolute inset-0 z-0">
         
-        {/* Left Carousel Arrow */}
-        <button
-          onClick={handlePrev}
-          className="absolute left-2 sm:-left-3 lg:-left-5 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-white text-slate-900 shadow-xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-105 border border-slate-300 cursor-pointer"
-          aria-label="Previous Showcase Slide"
+        {/* Native Responsive Video Player & Poster */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/images/blue-crabs-steamed.jpg"
+          className="w-full h-full object-cover object-center scale-105 filter brightness-[0.88]"
         >
-          <svg className="w-5 h-5 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* The Large Rounded Hero Frame */}
-        <div className="w-full relative h-[460px] sm:h-[540px] md:h-[620px] lg:h-[660px] rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-950 border-2 border-slate-200/80 group">
-          
-          {/* Background Image */}
-          <img
-            src={currentSlide.image}
-            alt={currentSlide.alt}
-            fetchPriority="high"
-            className="w-full h-full object-cover object-center transition-all duration-700 scale-100 group-hover:scale-105"
+          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src="/images/hero-video.mp4" type="video/mp4" />
+          <img 
+            src="/images/blue-crabs-steamed.jpg" 
+            alt="Lowry's Crab Shack freshly steamed Chesapeake blue crabs with Old Bay" 
+            className="w-full h-full object-cover object-center"
           />
+        </video>
 
-          {/* Heavy Coastal Shading Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-black/45 to-slate-950/30 pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_20%,rgba(15,23,42,0.6)_100%)] pointer-events-none" />
+        {/* Ambient Film Grain & Atmospheric Sunlight Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-restaurant-ink via-transparent to-black/50 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-gradient from-amber-500/10 via-transparent to-transparent pointer-events-none z-10" />
 
-          {/* Centered Editorial Typography Overlay */}
-          <div ref={heroTextRef} className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 sm:px-12 z-10">
-            
-            {/* Subtitle Pill */}
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-amber-300 text-[11px] sm:text-xs tracking-[0.2em] uppercase font-mono font-bold mb-4 sm:mb-6 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-crab-500 animate-pulse" />
-              <span>{currentSlide.subtitle}</span>
-            </div>
+        {/* Atmospheric Rising Steam Particles */}
+        <div className="hidden md:block absolute right-[22%] bottom-[28%] z-15 pointer-events-none">
+          <div className="relative w-16 h-28">
+            <div className="absolute bottom-0 left-3 w-4 h-16 rounded-full bg-white/30 blur-md animate-steam-1" />
+            <div className="absolute bottom-2 left-6 w-3 h-20 rounded-full bg-cream-50/25 blur-lg animate-steam-2" />
+            <div className="absolute bottom-1 left-4 w-5 h-24 rounded-full bg-amber-100/20 blur-xl animate-steam-3" />
+          </div>
+        </div>
+      </div>
 
-            {/* High-Contrast Editorial Headline */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] drop-shadow-xl max-w-4xl">
-              <span className="italic font-normal opacity-95 block sm:inline font-serif text-slate-100">
-                {currentSlide.headlineTop}{' '}
-              </span>
-              <span className="font-extrabold text-crab-400 font-serif">
-                {currentSlide.headlineBottom}
-              </span>
-            </h1>
-
-            {/* Tagline */}
-            <p className="mt-4 sm:mt-6 text-sm sm:text-lg md:text-xl text-slate-200 font-light max-w-2xl tracking-wide leading-relaxed drop-shadow">
-              {currentSlide.tagline}
-            </p>
-
-            {/* Primary Action Buttons */}
-            <div className="mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => openCustomizer({
-                  name: 'Steamed Chesapeake Blue Crabs',
-                  price: '$42.00',
-                  image: '/images/crab-bushel.jpg',
-                  badge: 'Live Steamed Crabs'
-                })}
-                className="rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold px-8 py-3.5 text-xs sm:text-sm uppercase tracking-[0.18em] transition-all duration-300 shadow-xl active:scale-95 cursor-pointer border-2 border-crab-600"
-              >
-                ORDER ONLINE (0% FEES)
-              </button>
-
-              <button
-                onClick={() => onOpenWizard()}
-                className="rounded-full bg-white/90 hover:bg-white text-slate-900 border border-white backdrop-blur-md px-7 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-[0.16em] transition-all duration-300 shadow-lg active:scale-95 cursor-pointer"
-              >
-                PARTY / CRAB INQUIRY
-              </button>
-            </div>
-
+      {/* Floating Header Tag & Content Overlay */}
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 w-full">
+        <div className="max-w-2xl text-left">
+          
+          {/* Editorial Category Tag */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-cream-50/15 backdrop-blur-md border border-cream-50/25 text-cream-100 text-xs font-mono tracking-widest uppercase mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-restaurant-red animate-pulse" />
+            <span>// 01 HAMILTON, VIRGINIA • EST. 2007</span>
           </div>
 
-          {/* Slide Indicator Dots */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center space-x-2 z-20">
-            {heroSlides.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSlideIndex(idx)}
-                className={`transition-all duration-300 rounded-full ${
-                  slideIndex === idx ? 'w-8 h-2 bg-crab-500' : 'w-2 h-2 bg-white/50 hover:bg-white/80'
-                }`}
-                aria-label={`Slide ${idx + 1}`}
-              />
-            ))}
+          {/* Hero Headline */}
+          <h1 className="font-serif font-bold text-5xl sm:text-7xl lg:text-8xl tracking-tight text-cream-50 leading-[0.98] mb-6 drop-shadow-md">
+            PULL UP A CHAIR. <br />
+            <span className="italic font-light text-cream-200">CRACK A CRAB.</span>
+          </h1>
+
+          {/* Supporting Copy */}
+          <p className="font-sans text-lg sm:text-2xl text-cream-100/90 font-normal leading-relaxed mb-10 max-w-xl">
+            Live Chesapeake Bay blue crabs steamed fresh with Old Bay, 4x Voted #1 Fried Chicken in Loudoun, and Donald's legendary seafood feasts spread across butcher paper.
+          </p>
+
+          {/* Hero CTAs */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <a 
+              href="#menu" 
+              className="btn-primary text-base !py-4 !px-8 shadow-thick group"
+            >
+              <span>EXPLORE SEAFOOD MENU</span>
+              <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </a>
+
+            <button 
+              onClick={() => onOpenOrder && onOpenOrder(null)} 
+              className="btn-secondary text-base !py-4 !px-8 shadow-sm backdrop-blur-md bg-white/10 hover:bg-white/20 text-cream-50 border-cream-50/30"
+            >
+              <PhoneIcon className="w-5 h-5 text-restaurant-gold" />
+              <span>ORDER TAKEOUT / TABLE</span>
+            </button>
+          </div>
+
+          {/* Trust Footnote & Operating Status */}
+          <div className="mt-12 pt-8 border-t border-cream-50/15 flex flex-wrap items-center gap-6 text-xs text-cream-200 font-mono">
+            <div className="flex items-center gap-2">
+              <span className="text-restaurant-gold font-bold">420 W COLONIAL HWY</span>
+              <span>• HAMILTON, VA</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-restaurant-gold font-bold">CALL (540) 338-2348</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-emerald-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>STEAMING FRESH TO ORDER</span>
+            </div>
           </div>
 
         </div>
+      </div>
 
-        {/* Right Carousel Arrow */}
-        <button
-          onClick={handleNext}
-          className="absolute right-2 sm:-right-3 lg:-right-5 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-white text-slate-900 shadow-xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-105 border border-slate-300 cursor-pointer"
-          aria-label="Next Showcase Slide"
-        >
-          <svg className="w-5 h-5 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
+      {/* Downward Section Cue */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-cream-200/60 flex flex-col items-center gap-1 animate-bounce pointer-events-none">
+        <span className="text-[10px] font-mono tracking-widest uppercase">Scroll</span>
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
       </div>
 
     </section>

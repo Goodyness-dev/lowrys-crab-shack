@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, ClipboardList, MessageSquare, 
+  Settings, LogOut, ExternalLink, Search, 
+  Bell, Mail, UtensilsCrossed, Menu, X, Plus, Calendar, ShieldCheck, Coffee
+} from 'lucide-react';
 import DashboardOverview from './DashboardOverview';
 import OrdersView from './OrdersView';
 import InboxView from './InboxView';
@@ -8,8 +13,15 @@ import NewOrderModal from './NewOrderModal';
 import { authApi, quotesApi } from '../../services/api';
 import { BUSINESS_INFO } from '../../data/businessData';
 
+function getInitials(name) {
+  if (!name) return 'PF';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 export default function AdminLayout({ user, onLogout, onBackToSite }) {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'orders' | 'inbox' | 'settings'
   const [modalQuote, setModalQuote] = useState(null);
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -25,178 +37,260 @@ export default function AdminLayout({ user, onLogout, onBackToSite }) {
   };
 
   const navItems = [
-    { id: 'dashboard', label: 'Management Overview', badge: null },
-    { id: 'orders', label: 'Table Reservations', badge: stats.total > 0 ? stats.total : null },
-    { id: 'inbox', label: 'Guest Messages', badge: stats.pending > 0 ? stats.pending : null },
+    { id: 'dashboard', label: 'Kitchen Dashboard', icon: LayoutDashboard },
+    { id: 'orders', label: 'Takeout & Table Orders', icon: ClipboardList, badge: stats.pending > 0 ? `${stats.pending} New` : null },
+    { id: 'inbox', label: 'Guest Messages & SMS', icon: MessageSquare, badge: null },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex antialiased">
-      {/* Mobile Drawer Backdrop */}
+    <div className="min-h-screen bg-[#f4f6f8] text-slate-900 font-sans flex antialiased">
+      {/* ------------------------------------------------------------- */}
+      {/* LEFT SIDEBAR (Desktop & Mobile Drawer)                        */}
+      {/* ------------------------------------------------------------- */}
+      {/* Backdrop for mobile */}
       {isMobileSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-xs"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 ease-in-out shadow-xl ${
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between transition-transform duration-300 ease-in-out ${
         isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
-        {/* Header & Logo */}
-        <div>
-          <div className="h-20 flex items-center px-5 border-b border-slate-800 space-x-3">
-            <img 
-              src="/images/shack-exterior.jpg" 
-              alt="Lowry's Crab Shack" 
-              className="w-10 h-10 rounded-xl object-cover border-2 border-red-600 shadow-sm"
-            />
-            <div className="overflow-hidden text-left">
-              <span className="font-serif font-bold text-white text-sm tracking-tight block truncate">
-                Lowry's Crab Shack
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-red-400 block font-mono font-semibold">
-                Owner & Staff Suite
-              </span>
+        <div className="p-6 space-y-8 flex-1 overflow-y-auto">
+          {/* Logo Brand */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="w-10 h-10 shrink-0 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-md shadow-red-600/30">
+                <UtensilsCrossed className="w-5 h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="font-heading font-black text-sm tracking-tight text-slate-900 block leading-tight truncate" title={BUSINESS_INFO.name}>
+                  {BUSINESS_INFO.name}
+                </span>
+                <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider block">
+                  Kitchen & Shack Admin
+                </span>
+              </div>
             </div>
+            <button 
+              onClick={() => setIsMobileSidebarOpen(false)}
+              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="p-4 space-y-1.5" aria-label="Admin Navigation">
-            {navItems.map((item) => {
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsMobileSidebarOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                    isActive
-                      ? 'bg-red-600 text-white shadow-md font-bold'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {item.badge !== null && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-900">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+          {/* MENU Section */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 block">
+              Menu
+            </span>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsMobileSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition ${
+                      isActive
+                        ? 'bg-shop-red text-white shadow-md shadow-shop-red/25'
+                        : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.badge && (
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                        isActive
+                          ? 'bg-white/25 text-white'
+                          : 'bg-shop-light text-shop-red border border-shop-border'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* GENERAL Section */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 block">
+              General
+            </span>
+            <nav className="space-y-1">
+              <button
+                onClick={() => {
+                  setActiveTab('settings');
+                  setIsMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition ${
+                  activeTab === 'settings'
+                    ? 'bg-shop-red text-white shadow-md shadow-shop-red/25'
+                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                }`}
+              >
+                <Settings className={`w-4 h-4 ${activeTab === 'settings' ? 'text-white' : 'text-slate-400'}`} />
+                <span>Settings & Alerts</span>
+              </button>
+
+              <button
+                onClick={onBackToSite}
+                className="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition"
+              >
+                <div className="flex items-center space-x-3">
+                  <ExternalLink className="w-4 h-4 text-slate-400" />
+                  <span>View Customer Site</span>
+                </div>
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold text-red-600 hover:bg-red-50 transition"
+              >
+                <LogOut className="w-4 h-4 text-red-500" />
+                <span>Logout</span>
+              </button>
+            </nav>
+          </div>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-800 space-y-2.5">
+        {/* Bottom Banner Card */}
+        <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-red-700 to-amber-700 text-white space-y-2 shadow-lg shadow-red-700/20">
+          <div className="flex items-center space-x-2">
+            <span className="text-base">🦀</span>
+            <h5 className="font-heading font-black text-xs truncate">Shack Steamer & Fryers Live</h5>
+          </div>
+          <p className="text-[11px] text-white/90 leading-snug">
+            Accepting takeout orders & steamed blue crab pre-orders for Loudoun locals.
+          </p>
           <button
             onClick={onBackToSite}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-medium transition cursor-pointer"
+            className="w-full py-2 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs rounded-xl transition shadow-xs cursor-pointer"
           >
-            <span>← View Public Site</span>
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-xl text-xs text-red-400 hover:bg-red-950/40 transition font-medium cursor-pointer"
-          >
-            <span>Sign Out</span>
+            Visit Customer Site
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Navbar */}
-        <header className="h-20 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between shadow-xs">
-          <div className="flex items-center space-x-3 overflow-hidden">
+      {/* ------------------------------------------------------------- */}
+      {/* MAIN CONTENT CANVAS & TOP BAR                                 */}
+      {/* ------------------------------------------------------------- */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* TOP BAR */}
+        <header className="h-20 bg-white border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+          {/* Left: Mobile hamburger & Search */}
+          <div className="flex items-center space-x-3 flex-1 max-w-md">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="lg:hidden px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-300 text-xs font-bold uppercase tracking-wider text-slate-800 shadow-xs cursor-pointer shrink-0"
-              aria-label="Open Navigation Menu"
+              className="lg:hidden p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100"
             >
-              Menu
+              <Menu className="w-5 h-5" />
             </button>
-            <h1 className="font-serif text-base sm:text-xl lg:text-2xl font-bold text-slate-900 capitalize truncate">
-              {activeTab === 'dashboard' ? "Management Overview" :
-               activeTab === 'orders' ? "Table & Bushel Reservations" :
-               "Guest Inbox"}
-            </h1>
+
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search orders, customers, or services..."
+                className="w-full bg-[#f8fafc] border border-slate-200 focus:border-shop-red focus:bg-white rounded-2xl pl-10 pr-12 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none transition"
+              />
+              <span className="hidden sm:inline-block absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-2xs">
+                ⌘F
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-3 shrink-0">
+          {/* Right: Notifications & Profile */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            {/* Quick Inbox Shortcut */}
             <button
-              onClick={() => setIsNewOrderOpen(true)}
-              className="rounded-full bg-red-600 hover:bg-red-700 text-white font-bold px-4 sm:px-6 py-2.5 text-xs uppercase tracking-wider transition shadow-sm active:scale-95 cursor-pointer whitespace-nowrap"
+              onClick={() => setActiveTab('inbox')}
+              className="w-10 h-10 rounded-2xl border border-slate-200/80 hover:bg-slate-50 flex items-center justify-center text-slate-600 relative transition"
+              title="Customer Inbox"
             >
-              + Reservation
+              <Mail className="w-4 h-4" />
+              {stats.pending > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-shop-red text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                  {stats.pending}
+                </span>
+              )}
             </button>
 
-            <img 
-              src="/images/shack-exterior.jpg" 
-              alt="Management" 
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-red-600 shadow-xs"
-            />
+            {/* Notification Bell */}
+            <button
+              onClick={() => setActiveTab('orders')}
+              className="w-10 h-10 rounded-2xl border border-slate-200/80 hover:bg-slate-50 flex items-center justify-center text-slate-600 relative transition"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute 2.5 2.5 w-2 h-2 rounded-full bg-shop-red" />
+            </button>
+
+            {/* Admin Profile Card */}
+            <div className="flex items-center space-x-3 pl-2 border-l border-slate-200">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-600 text-white font-black text-xs flex items-center justify-center shadow-sm">
+                LCS
+              </div>
+              <div className="hidden sm:block text-left">
+                <h4 className="text-xs font-black text-slate-900 leading-tight truncate max-w-[130px]">
+                  Donald & Leslie Lowry
+                </h4>
+                <span className="text-[11px] text-slate-400 block leading-tight truncate max-w-[130px]">
+                  Hamilton, VA
+                </span>
+              </div>
+            </div>
           </div>
         </header>
 
-        {/* View Component Render */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50">
+        {/* BODY CANVAS */}
+        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
             <DashboardOverview 
-              stats={stats}
-              onViewAllOrders={() => setActiveTab('orders')}
-              onOpenQuoteDetail={(q) => setModalQuote(q)}
-              onNewOrder={() => setIsNewOrderOpen(true)}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+              onSelectQuote={(q) => setModalQuote(q)}
+              onOpenNewOrder={() => setIsNewOrderOpen(true)}
             />
           )}
 
-          {activeTab === 'orders' && (
-            <OrdersView 
-              onOpenQuoteDetail={(q) => setModalQuote(q)}
-              onNewOrder={() => setIsNewOrderOpen(true)}
-            />
-          )}
+          {activeTab === 'orders' && <OrdersView />}
 
           {activeTab === 'inbox' && (
-            <InboxView 
-              onOpenQuoteDetail={(q) => setModalQuote(q)}
-            />
+            <InboxView onOpenFullQuote={(q) => setModalQuote(q)} />
           )}
 
-          {activeTab === 'settings' && (
-            <AdminSettings />
-          )}
+          {activeTab === 'settings' && <AdminSettings />}
         </main>
       </div>
 
       {/* Quote Detail Modal */}
       {modalQuote && (
-        <QuoteDetailModal 
+        <QuoteDetailModal
           quote={modalQuote}
           onClose={() => setModalQuote(null)}
-          onUpdated={() => {
-            quotesApi.getStats().then(setStats).catch(() => {});
-          }}
+          onUpdate={(updated) => setModalQuote(updated)}
         />
       )}
 
-      {/* New Order Modal */}
-      {isNewOrderOpen && (
-        <NewOrderModal 
-          isOpen={isNewOrderOpen}
-          onClose={() => setIsNewOrderOpen(false)}
-          onCreated={() => {
-            setIsNewOrderOpen(false);
-            quotesApi.getStats().then(setStats).catch(() => {});
-            setActiveTab('orders');
-          }}
-        />
-      )}
+      {/* New Manual Order Modal */}
+      <NewOrderModal
+        isOpen={isNewOrderOpen}
+        onClose={() => setIsNewOrderOpen(false)}
+        onCreated={() => {
+          quotesApi.getStats().then(setStats).catch(() => {});
+        }}
+      />
     </div>
   );
 }

@@ -1,192 +1,123 @@
 import React from 'react';
+import { PhoneIcon, MapPinIcon, CoffeeIcon, SpoonForkIcon } from '../common/Icons';
 import { BUSINESS_INFO } from '../../data/businessData';
-import { useCart } from '../../context/CartContext';
 
-export default function Footer({ onOpenWizard, onNavigate }) {
-  const { openCustomizer } = useCart();
-  const handleLinkClick = (e, target) => {
-    e.preventDefault();
-    if (target === 'services') {
-      if (onNavigate) onNavigate('services');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (onNavigate) onNavigate('home');
-    setTimeout(() => {
-      const el = document.querySelector(target);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
-
+export default function Footer({ onOpenMenu, onOpenOrder }) {
   return (
-    <footer className="bg-slate-900 text-slate-300 text-sm border-t border-slate-800 pt-16 pb-12" role="contentinfo" id="contact">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+    <footer className="bg-restaurant-ink text-cream-100 border-t-2 border-restaurant-brown/20 relative overflow-hidden">
+      
+      {/* Decorative Top Accent Stripe */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-restaurant-red via-restaurant-gold to-restaurant-turquoise" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         
-        {/* Main 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
           
-          {/* Column 1 (4 cols): Brand & Info */}
-          <div className="lg:col-span-4 space-y-4 text-left">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full border-2 border-red-600 bg-red-950/40 flex items-center justify-center font-serif font-bold text-red-500 text-sm">
-                LC
+          {/* Brand Info */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-restaurant-red text-cream-50 flex items-center justify-center font-serif font-bold text-lg border-2 border-cream-50/20">
+                LCS
               </div>
               <div>
-                <h4 className="font-serif text-lg font-bold text-white leading-tight">
+                <h3 className="font-serif font-bold text-lg text-cream-50">
                   Lowry's Crab Shack
-                </h4>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-red-400 font-mono font-medium">
-                  Hamilton, VA • Est. 1970s
-                </p>
+                </h3>
+                <span className="text-[11px] font-mono text-restaurant-gold uppercase tracking-wider">
+                  Hamilton Seafood Shack • Est. 2007
+                </span>
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed max-w-sm">
-              Loudoun County's beloved roadside seafood haven. Live Chesapeake Bay blue crabs steamed to order, 4-time voted #1 fried chicken, spiced peel-and-eat shrimp, and family hospitality in our open-air picnic pavilion.
+            <p className="text-xs sm:text-sm text-cream-200/75 leading-relaxed font-sans pt-2">
+              Pull up a chair. Fresh live Chesapeake Bay blue crabs, 4x Voted #1 Fried Chicken in Loudoun, Low Country boils, and ice-cold drinks served on butcher paper.
             </p>
 
-            {/* Contact Actions */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <a 
-                href={`tel:${BUSINESS_INFO.phoneClean}`}
-                className="px-4 py-2 rounded-full border border-slate-700 hover:border-red-500 text-white hover:text-red-400 text-xs font-mono font-bold transition flex items-center space-x-1.5"
-              >
-                <span>Call: {BUSINESS_INFO.phone}</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => openCustomizer({
-                  name: 'Steamed Chesapeake Blue Crabs',
-                  price: '$42.00',
-                  image: '/images/crab-bushel.jpg',
-                  badge: 'Live Steamed Crabs'
-                })}
-                className="px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer active:scale-95"
-              >
-                Order Online (0% Fees)
-              </button>
+            <div className="pt-2 text-xs font-mono text-cream-300">
+              Virginia Health Department Certified • 4x Best of Loudoun Winner
             </div>
           </div>
 
-          {/* Column 2 (2 cols): Menu Shortcuts */}
-          <div className="lg:col-span-2 space-y-3 text-left">
-            <h5 className="font-serif text-sm font-bold uppercase tracking-wider text-white">
-              Shack Specialties
-            </h5>
-            <ul className="space-y-2 text-xs sm:text-sm text-slate-400">
+          {/* Quick Navigation */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-serif font-bold text-sm uppercase tracking-wider text-cream-50">
+              Explore The Shack
+            </h4>
+            <ul className="space-y-2 text-xs font-mono text-cream-200/80">
               <li>
-                <button onClick={(e) => handleLinkClick(e, 'services')} className="hover:text-red-400 transition">
-                  Steamed Blue Crabs
-                </button>
+                <a href="#menu" className="hover:text-restaurant-red transition-colors">
+                  → Full Seafood & Chicken Menu
+                </a>
               </li>
               <li>
-                <button onClick={(e) => handleLinkClick(e, 'services')} className="hover:text-red-400 transition">
-                  #1 Fried Chicken
-                </button>
+                <a href="#the-table" className="hover:text-restaurant-red transition-colors">
+                  → The Crab Feast Table
+                </a>
               </li>
               <li>
-                <button onClick={(e) => handleLinkClick(e, 'services')} className="hover:text-red-400 transition">
-                  Spiced Steamed Shrimp
-                </button>
+                <a href="#story" className="hover:text-restaurant-red transition-colors">
+                  → Donald & Leslie's Story
+                </a>
               </li>
               <li>
-                <button onClick={(e) => handleLinkClick(e, 'services')} className="hover:text-red-400 transition">
-                  Jumbo Lump Crab Cakes
-                </button>
+                <a href="#visit" className="hover:text-restaurant-red transition-colors">
+                  → Patio Location & Hours
+                </a>
               </li>
               <li>
-                <button onClick={(e) => handleLinkClick(e, 'services')} className="hover:text-red-400 transition">
-                  Smith Island Cakes
-                </button>
+                <a href="#/admin" className="text-restaurant-gold hover:underline">
+                  → Kitchen Admin Portal
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 3 (3 cols): Dining Hours */}
-          <div className="lg:col-span-3 space-y-3 text-left">
-            <h5 className="font-serif text-sm font-bold uppercase tracking-wider text-white">
-              Shack Hours
-            </h5>
-            <div className="space-y-1.5 text-xs text-slate-400">
-              <div className="flex justify-between py-1 border-b border-slate-800">
-                <span className="font-medium">Wed – Fri:</span>
-                <span>4:00 PM – 8:00 PM</span>
+          {/* Hours At A Glance */}
+          <div className="lg:col-span-5 space-y-3">
+            <h4 className="font-serif font-bold text-sm uppercase tracking-wider text-cream-50">
+              Operating Hours & Contact
+            </h4>
+            <div className="text-xs font-mono space-y-1.5 text-cream-200/80">
+              <div className="flex justify-between py-1 border-b border-cream-50/10">
+                <span>Monday & Tuesday:</span>
+                <span className="text-cream-50/60 font-medium">Closed (Fresh Sourcing)</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-800">
-                <span className="font-medium">Sat & Sun:</span>
-                <span>12:00 PM – 8:00 PM</span>
+              <div className="flex justify-between py-1 border-b border-cream-50/10">
+                <span>Wednesday – Friday:</span>
+                <span className="text-cream-50 font-bold">4:00 PM – 8:00 PM</span>
               </div>
-              <div className="flex justify-between py-1">
-                <span className="font-medium text-red-400 font-semibold">Mon & Tue:</span>
-                <span className="italic text-slate-500">Closed (Watermen Rest)</span>
+              <div className="flex justify-between py-1 border-b border-cream-50/10">
+                <span>Saturday & Sunday:</span>
+                <span className="text-cream-50 font-bold">12:00 PM – 8:00 PM</span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-400 font-mono pt-1">
-              Live crabs steamed fresh to order. Call ahead for bushel reservations!
-            </p>
-          </div>
 
-          {/* Column 4 (3 cols): Stylized Map Card */}
-          <div className="lg:col-span-3 space-y-2.5 text-left">
-            <div className="flex items-center justify-between">
-              <h5 className="font-serif text-sm font-bold uppercase tracking-wider text-white">
-                Location
-              </h5>
-              <button
-                onClick={(e) => handleLinkClick(e, '#location')}
-                className="text-[11px] text-red-400 hover:underline font-bold"
+            <div className="pt-3 flex flex-wrap gap-4 text-xs font-mono">
+              <a 
+                href={`tel:${BUSINESS_INFO.phone.replace(/[^0-9]/g, '')}`}
+                className="flex items-center gap-1.5 text-cream-50 hover:text-restaurant-red transition-colors"
               >
-                Full Map ↓
-              </button>
+                <PhoneIcon className="w-3.5 h-3.5 text-restaurant-red" />
+                <span>(540) 338-2348</span>
+              </a>
+              <span className="text-cream-50/30">•</span>
+              <span className="text-cream-300">420 W Colonial Hwy, Hamilton, VA</span>
             </div>
-
-            {/* Map Preview Card */}
-            <div className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-800/60 p-2 shadow-xs group">
-              <div className="relative h-32 w-full rounded-xl overflow-hidden bg-slate-800">
-                <iframe
-                  title="Lowry's Crab Shack Location Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3090.812328731086!2d-77.6747929!3d39.1365958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89b617bc93f0b2f1%3A0xb304b77f88417dc4!2sLowry&#39;s%20Crab%20Shack!5e0!3m2!1sen!2sus!4v1755720986076!5m2!1sen!2sus"
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                />
-                <a 
-                  href="#location"
-                  onClick={(e) => handleLinkClick(e, '#location')}
-                  className="absolute inset-0 bg-transparent hover:bg-black/10 transition"
-                  aria-label="View interactive map"
-                />
-              </div>
-
-              <div className="pt-2 px-1 flex items-center justify-between text-[11px]">
-                <span className="font-serif font-bold text-white truncate">
-                  420 W Colonial Hwy, Hamilton
-                </span>
-                <a
-                  href={BUSINESS_INFO.googleMapsLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-red-400 font-semibold hover:underline flex-shrink-0 ml-1"
-                >
-                  Directions →
-                </a>
-              </div>
-            </div>
-
           </div>
 
         </div>
 
-        {/* Copyright & Admin Portal Link */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} {BUSINESS_INFO.legalName} • Hamilton, VA. All rights reserved.</p>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => onNavigate('admin')}
-              className="hover:text-red-400 transition underline underline-offset-4 cursor-pointer font-semibold"
-            >
-              Shack Staff & Management Admin
-            </button>
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-8 border-t border-cream-50/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-cream-300">
+          <div>
+            © {new Date().getFullYear()} Lowry's Crab Shack LLC. All rights reserved.
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/llms.txt" className="hover:text-cream-50 transition-colors">llms.txt</a>
+            <span>•</span>
+            <a href="/robots.txt" className="hover:text-cream-50 transition-colors">robots.txt</a>
+            <span>•</span>
+            <a href="#/admin" className="text-restaurant-gold hover:underline">Kitchen Admin</a>
           </div>
         </div>
 
