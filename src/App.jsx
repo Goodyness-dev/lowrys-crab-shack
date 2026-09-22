@@ -12,11 +12,17 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminLogin from './components/admin/AdminLogin';
 import { BUSINESS_INFO } from './data/businessData';
 import { authApi, getStoredToken } from './services/api';
+import { CartProvider, useCart } from './context/CartContext';
+import ItemCustomizerModal from './components/ordering/ItemCustomizerModal';
+import OrderCartDrawer from './components/ordering/OrderCartDrawer';
+import ShackCheckoutModal from './components/ordering/ShackCheckoutModal';
 
-export default function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'services' | 'admin'
   const [wizardOpen, setWizardOpen] = useState(false);
   const [wizardCategory, setWizardCategory] = useState(null);
+
+  const { itemCount, setIsCartOpen, openCustomizer } = useCart();
 
   // Admin Authentication State
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -171,23 +177,60 @@ export default function App() {
         initialCategory={wizardCategory}
       />
 
-      {/* Sticky Mobile Bottom Order & Reservation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 sm:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 flex items-center gap-2 shadow-2xl">
+      {/* Custom 0% Commission Online Ordering Modals */}
+      <ItemCustomizerModal />
+      <OrderCartDrawer />
+      <ShackCheckoutModal />
+
+      {/* Sticky Mobile Bottom Order & Cart Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 sm:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 p-2.5 flex items-center gap-2 shadow-2xl">
         <a
           href={`tel:${BUSINESS_INFO.phoneClean}`}
-          className="flex-1 py-3 px-2 rounded-full bg-slate-100 text-slate-900 border border-slate-300 font-bold text-xs flex items-center justify-center space-x-1 active:scale-95 shadow-xs"
+          className="py-2.5 px-3 rounded-full bg-slate-100 text-slate-900 border border-slate-300 font-bold text-xs flex items-center justify-center space-x-1 active:scale-95 shadow-xs"
         >
-          <span>Call: {BUSINESS_INFO.phone}</span>
+          <span>Call</span>
         </a>
-        <a
-          href={BUSINESS_INFO.onlineOrderingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 py-3 px-2 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-1 shadow-md active:scale-95"
+        <button
+          onClick={() => {
+            if (currentPage !== 'services') {
+              handleNavigate('services');
+            } else {
+              openCustomizer({
+                name: 'Steamed Chesapeake Blue Crabs',
+                price: '$42.00',
+                image: '/images/crab-bushel.jpg',
+                badge: 'Live Steamed Crabs'
+              });
+            }
+          }}
+          className="flex-1 py-2.5 px-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-1 shadow-md active:scale-95 cursor-pointer"
         >
-          <span>Order Talech</span>
-        </a>
+          <span>Order Online</span>
+        </button>
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="relative py-2.5 px-3.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-1 shadow-md active:scale-95 cursor-pointer"
+          aria-label="View Order Basket"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span>Cart</span>
+          {itemCount > 0 && (
+            <span className="ml-1 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              {itemCount}
+            </span>
+          )}
+        </button>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <CartProvider>
+      <AppContent />
+    </CartProvider>
   );
 }

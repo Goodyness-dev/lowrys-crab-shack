@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SERVICES } from '../../data/servicesData';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 import { gsap } from 'gsap';
 
 export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
+  const { openCustomizer, setIsCartOpen, itemCount } = useCart();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const menuContainerRef = useRef(null);
@@ -82,20 +84,34 @@ export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
 
         {/* Action Buttons */}
         <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={BUSINESS_INFO.onlineOrderingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 px-7 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg hover:shadow-red-600/30 hover:-translate-y-0.5 cursor-pointer"
+          <button
+            type="button"
+            onClick={() => openCustomizer({
+              name: 'Steamed Chesapeake Blue Crabs',
+              price: '$42.00',
+              image: '/images/crab-bushel.jpg',
+              badge: 'Live Steamed Crabs'
+            })}
+            className="inline-flex items-center space-x-2 px-7 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg hover:shadow-red-600/30 hover:-translate-y-0.5 cursor-pointer active:scale-95"
           >
-            <span>Order Online on Talech</span>
+            <span>Start Custom Shack Order</span>
             <span>→</span>
-          </a>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition shadow-sm cursor-pointer active:scale-95"
+          >
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span>View Basket ({itemCount})</span>
+          </button>
           <a
             href={`tel:${BUSINESS_INFO.phoneClean}`}
             className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-full bg-white border-2 border-slate-300 hover:border-sky-900 text-slate-800 font-bold text-xs uppercase tracking-wider transition shadow-xs"
           >
-            <span>Call to Order: {BUSINESS_INFO.phone}</span>
+            <span>Call: {BUSINESS_INFO.phone}</span>
           </a>
         </div>
       </div>
@@ -159,15 +175,15 @@ export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
               </div>
 
               <div className="flex items-center space-x-3 shrink-0">
-                <a
-                  href={BUSINESS_INFO.onlineOrderingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => openCustomizer(service.featuredDishes[0] || { name: service.name, price: '$18.99', badge: service.badge })}
                   className="rounded-full bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 text-xs uppercase tracking-wider transition shadow-md active:scale-95 cursor-pointer"
                 >
-                  Order via Talech
-                </a>
+                  Order / Customize
+                </button>
                 <button
+                  type="button"
                   onClick={() => onOpenWizard(service.name)}
                   className="rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-5 py-3 text-xs uppercase tracking-wider transition active:scale-95 cursor-pointer"
                 >
@@ -182,7 +198,7 @@ export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
                 <div 
                   key={i}
                   className="dish-showcase-card card-thick-hover overflow-hidden flex flex-col justify-between group cursor-pointer bg-white"
-                  onClick={() => onOpenWizard(dish.name)}
+                  onClick={() => openCustomizer(dish)}
                 >
                   {/* BIG PROMINENT FOOD IMAGE - THE MAIN THING ON THE CARD */}
                   <div className="relative w-full h-64 sm:h-76 md:h-80 overflow-hidden bg-slate-100">
@@ -209,7 +225,7 @@ export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
                     {/* Hover Prompt */}
                     <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <span className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-full bg-white text-slate-900 text-xs font-bold shadow-lg">
-                        <span>Select for Reservation / Order</span>
+                        <span>Customize Shack Order</span>
                         <span>→</span>
                       </span>
                     </div>
@@ -234,15 +250,17 @@ export default function AllServicesPage({ onOpenWizard, onBackToHome }) {
                         {service.sidesIncluded.split('.')[0]}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <a
-                          href={BUSINESS_INFO.onlineOrderingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-xs font-bold uppercase tracking-wider text-red-600 hover:text-red-700 hover:underline"
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openCustomizer(dish);
+                          }}
+                          className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition shadow-sm active:scale-95 cursor-pointer"
                         >
-                          Order Online →
-                        </a>
+                          <span>Customize & Order</span>
+                          <span>+</span>
+                        </button>
                       </div>
                     </div>
                   </div>

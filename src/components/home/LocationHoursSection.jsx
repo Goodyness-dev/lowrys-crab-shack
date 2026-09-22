@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { BUSINESS_INFO, isOpenNow } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function LocationHoursSection({ onOpenWizard }) {
+  const { openCustomizer } = useCart();
   const [copied, setCopied] = useState(false);
   const shopOpen = isOpenNow();
 
@@ -83,14 +85,18 @@ export default function LocationHoursSection({ onOpenWizard }) {
               Call: {BUSINESS_INFO.phone}
             </a>
 
-            <a
-              href={BUSINESS_INFO.onlineOrderingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => openCustomizer({
+                name: 'Steamed Chesapeake Blue Crabs',
+                price: '$42.00',
+                image: '/images/outdoor-picnic.jpg',
+                badge: 'Live Steamed Crabs'
+              })}
               className="px-6 py-2.5 rounded-full bg-crab-600 hover:bg-crab-700 text-white text-xs font-bold uppercase tracking-wider transition shadow-sm active:scale-95 cursor-pointer"
             >
-              Order Online (Talech)
-            </a>
+              Order Online (0% Fees)
+            </button>
           </div>
         </div>
 

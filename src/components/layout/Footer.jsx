@@ -1,7 +1,9 @@
 import React from 'react';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function Footer({ onOpenWizard, onNavigate }) {
+  const { openCustomizer } = useCart();
   const handleLinkClick = (e, target) => {
     e.preventDefault();
     if (target === 'services') {
@@ -52,14 +54,18 @@ export default function Footer({ onOpenWizard, onNavigate }) {
               >
                 <span>Call: {BUSINESS_INFO.phone}</span>
               </a>
-              <a
-                href={BUSINESS_INFO.onlineOrderingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer"
+              <button
+                type="button"
+                onClick={() => openCustomizer({
+                  name: 'Steamed Chesapeake Blue Crabs',
+                  price: '$42.00',
+                  image: '/images/crab-bushel.jpg',
+                  badge: 'Live Steamed Crabs'
+                })}
+                className="px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer active:scale-95"
               >
-                Order Online
-              </a>
+                Order Online (0% Fees)
+              </button>
             </div>
           </div>
 

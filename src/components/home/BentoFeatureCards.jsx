@@ -1,8 +1,10 @@
 import React from 'react';
 import { imageManifest } from '../../data/imageManifest';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function BentoFeatureCards({ onOpenWizard, onViewAllServices }) {
+  const { openCustomizer } = useCart();
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
@@ -42,14 +44,18 @@ export default function BentoFeatureCards({ onOpenWizard, onViewAllServices }) {
             <span className="text-xs font-mono text-slate-500 tracking-wider">
               Males & Females • Dozen & Bushel
             </span>
-            <a
-              href={BUSINESS_INFO.onlineOrderingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => openCustomizer({
+                name: 'Steamed Chesapeake Blue Crabs',
+                price: '$42.00',
+                image: imageManifest.features.crabs,
+                badge: 'Live Steamed'
+              })}
               className="rounded-full bg-crab-600 hover:bg-crab-700 text-white px-6 py-2.5 text-xs font-bold uppercase tracking-wider transition shadow-sm active:scale-95 cursor-pointer"
             >
-              Order Crabs Online
-            </a>
+              Order Crabs (0% Fees)
+            </button>
           </div>
         </div>
 

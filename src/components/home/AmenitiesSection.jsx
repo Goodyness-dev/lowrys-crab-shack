@@ -1,8 +1,10 @@
 import React from 'react';
 import { AMENITIES } from '../../data/amenitiesData';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function AmenitiesSection({ onOpenWizard }) {
+  const { openCustomizer } = useCart();
   return (
     <section id="amenities" className="py-20 sm:py-24 bg-white border-t border-slate-200" aria-labelledby="amenities-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,14 +75,18 @@ export default function AmenitiesSection({ onOpenWizard }) {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <a
-                href={BUSINESS_INFO.onlineOrderingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-3.5 rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
+              <button
+                type="button"
+                onClick={() => openCustomizer({
+                  name: 'Steamed Chesapeake Blue Crabs',
+                  price: '$42.00',
+                  image: '/images/outdoor-picnic.jpg',
+                  badge: 'Picnic & Carryout'
+                })}
+                className="px-8 py-3.5 rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer"
               >
-                Order Online (Talech)
-              </a>
+                Order Online (0% Fees)
+              </button>
               <a
                 href={`tel:${BUSINESS_INFO.phone.replace(/[^0-9]/g, '')}`}
                 className="px-6 py-3.5 rounded-full border-2 border-slate-300 hover:border-slate-400 text-slate-800 font-bold text-xs uppercase tracking-widest transition-all active:scale-95"

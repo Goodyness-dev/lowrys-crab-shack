@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { imageManifest } from '../../data/imageManifest';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 import { gsap } from 'gsap';
 
 export default function GallerySection({ onOpenWizard }) {
+  const { openCustomizer } = useCart();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeModalImage, setActiveModalImage] = useState(null);
   const galleryRef = useRef(null);
@@ -128,15 +130,21 @@ export default function GallerySection({ onOpenWizard }) {
                   <span className="font-mono text-[11px] uppercase tracking-wider text-crab-600 font-semibold">
                     Hamilton, VA • Est. 2007
                   </span>
-                  <a 
-                    href={BUSINESS_INFO.onlineOrderingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="font-bold text-crab-600 hover:text-crab-800 hover:underline"
+                  <button 
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openCustomizer({
+                        name: item.title,
+                        price: '$18.99',
+                        image: item.src,
+                        badge: item.tag
+                      });
+                    }}
+                    className="font-bold text-crab-600 hover:text-crab-800 hover:underline cursor-pointer"
                   >
                     Order Now →
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -185,14 +193,22 @@ export default function GallerySection({ onOpenWizard }) {
               </div>
 
               <div className="flex items-center space-x-3 shrink-0">
-                <a
-                  href={BUSINESS_INFO.onlineOrderingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => {
+                    const img = activeModalImage;
+                    setActiveModalImage(null);
+                    openCustomizer({
+                      name: img.title,
+                      price: '$18.99',
+                      image: img.src,
+                      badge: img.tag
+                    });
+                  }}
                   className="rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold px-6 py-3 text-xs uppercase tracking-wider shadow-md transition active:scale-95 cursor-pointer"
                 >
-                  Order on Talech
-                </a>
+                  Order This Dish (0% Fees)
+                </button>
               </div>
             </div>
           </div>

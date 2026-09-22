@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { imageManifest } from '../../data/imageManifest';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 import { gsap } from 'gsap';
 
 export default function Hero({ onOpenWizard }) {
+  const { openCustomizer } = useCart();
   const [slideIndex, setSlideIndex] = useState(0);
   const heroTextRef = useRef(null);
 
@@ -112,14 +114,18 @@ export default function Hero({ onOpenWizard }) {
 
             {/* Primary Action Buttons */}
             <div className="mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href={BUSINESS_INFO.onlineOrderingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => openCustomizer({
+                  name: 'Steamed Chesapeake Blue Crabs',
+                  price: '$42.00',
+                  image: '/images/crab-bushel.jpg',
+                  badge: 'Live Steamed Crabs'
+                })}
                 className="rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold px-8 py-3.5 text-xs sm:text-sm uppercase tracking-[0.18em] transition-all duration-300 shadow-xl active:scale-95 cursor-pointer border-2 border-crab-600"
               >
-                ORDER ONLINE (TALECH)
-              </a>
+                ORDER ONLINE (0% FEES)
+              </button>
 
               <button
                 onClick={() => onOpenWizard()}

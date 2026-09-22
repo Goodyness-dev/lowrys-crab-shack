@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function Navbar({ onOpenWizard, currentPage = 'home', onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { itemCount, setIsCartOpen, openCustomizer } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -108,7 +110,7 @@ export default function Navbar({ onOpenWizard, currentPage = 'home', onNavigate 
         </nav>
 
         {/* Right Desktop CTA */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-3.5">
           <a
             href={`tel:${BUSINESS_INFO.phone.replace(/[^0-9]/g, '')}`}
             className="text-xs font-bold tracking-wider text-slate-800 hover:text-crab-600 transition flex items-center space-x-1.5 font-mono"
@@ -120,26 +122,82 @@ export default function Navbar({ onOpenWizard, currentPage = 'home', onNavigate 
             <span>{BUSINESS_INFO.phone}</span>
           </a>
 
-          <a
-            href={BUSINESS_INFO.onlineOrderingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Cart Drawer Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 transition flex items-center justify-center cursor-pointer active:scale-95"
+            title="View Cart"
+            aria-label="View Cart"
+          >
+            <svg className="w-4 h-4 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            {itemCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                {itemCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (currentPage !== 'services' && onNavigate) {
+                onNavigate('services');
+              } else {
+                openCustomizer({
+                  name: 'Steamed Chesapeake Blue Crabs',
+                  price: '$42.00',
+                  image: '/images/crab-bushel.jpg',
+                  badge: 'Live Steamed Crabs'
+                });
+              }
+            }}
             className="rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold px-6 py-2.5 text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-sm active:scale-95 cursor-pointer touch-manipulation"
             aria-label="Order Online from Lowry's Crab Shack"
           >
             ORDER ONLINE
-          </a>
+          </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="flex lg:hidden items-center space-x-3">
+        {/* Mobile Action Buttons */}
+        <div className="flex lg:hidden items-center space-x-2">
           <button
             type="button"
-            onClick={() => onOpenWizard()}
-            className="rounded-full bg-crab-600 text-white font-bold px-4 py-1.5 text-[11px] uppercase tracking-wider active:scale-95 touch-manipulation"
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-2 rounded-full bg-slate-100 text-slate-800 active:scale-95 touch-manipulation cursor-pointer"
+            aria-label="Open Basket"
+          >
+            <svg className="w-5 h-5 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (currentPage !== 'services' && onNavigate) {
+                onNavigate('services');
+              } else {
+                openCustomizer({
+                  name: 'Steamed Chesapeake Blue Crabs',
+                  price: '$42.00',
+                  image: '/images/crab-bushel.jpg',
+                  badge: 'Live Steamed Crabs'
+                });
+              }
+            }}
+            className="rounded-full bg-crab-600 text-white font-bold px-3 py-1.5 text-[11px] uppercase tracking-wider active:scale-95 touch-manipulation cursor-pointer"
           >
             Order
           </button>
+
           <button
             type="button"
             onClick={() => setMobileMenuOpen(prev => !prev)}
@@ -190,20 +248,41 @@ export default function Navbar({ onOpenWizard, currentPage = 'home', onNavigate 
             >
               <span>CALL {BUSINESS_INFO.phone}</span>
             </a>
-            <a
-              href={BUSINESS_INFO.onlineOrderingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center py-3 rounded-full bg-crab-600 hover:bg-crab-700 text-white text-xs font-bold uppercase tracking-widest shadow-md"
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (currentPage !== 'services' && onNavigate) {
+                  onNavigate('services');
+                } else {
+                  openCustomizer({
+                    name: 'Steamed Chesapeake Blue Crabs',
+                    price: '$42.00',
+                    image: '/images/crab-bushel.jpg',
+                    badge: 'Live Steamed Crabs'
+                  });
+                }
+              }}
+              className="w-full flex items-center justify-center py-3 rounded-full bg-crab-600 hover:bg-crab-700 text-white text-xs font-bold uppercase tracking-widest shadow-md cursor-pointer"
             >
-              ORDER ONLINE (TALECH)
-            </a>
+              ORDER ONLINE (0% FEES)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsCartOpen(true);
+              }}
+              className="w-full flex items-center justify-center py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-widest shadow-xs cursor-pointer"
+            >
+              VIEW BASKET ({itemCount} ITEMS)
+            </button>
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenWizard();
               }}
-              className="w-full py-3 rounded-full border-2 border-crab-600 text-crab-700 text-xs font-bold uppercase tracking-widest shadow-xs"
+              className="w-full py-3 rounded-full border-2 border-crab-600 text-crab-700 text-xs font-bold uppercase tracking-widest shadow-xs cursor-pointer"
             >
               PARTY / CATERING INQUIRY
             </button>

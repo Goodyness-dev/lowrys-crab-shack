@@ -38,28 +38,43 @@ export default function OrdersView() {
       setStats(statsRes || { total: 0, pending: 0, quoted: 0, completed: 0 });
     } catch (err) {
       try {
-        const local = JSON.parse(localStorage.getItem('steakhouse_reservations') || localStorage.getItem('biz_quotes') || '[]');
-        const normalized = local.map(r => ({
-          id: r.id || `RES-${Date.now().toString().slice(-6)}`,
-          name: r.name || r.customer?.name || 'Valued Guest',
+        const localOrders = JSON.parse(localStorage.getItem('lowrys_orders') || '[]');
+        const localQuotes = JSON.parse(localStorage.getItem('biz_quotes') || localStorage.getItem('steakhouse_reservations') || '[]');
+        const combined = [...localOrders, ...localQuotes];
+        
+        // Remove duplicates by id
+        const uniqueMap = new Map();
+        combined.forEach(item => {
+          if (item && item.id) uniqueMap.set(item.id, item);
+        });
+        const uniqueItems = Array.from(uniqueMap.values());
+
+        const normalized = uniqueItems.map(r => ({
+          id: r.id || `LC-${Date.now().toString().slice(-5)}`,
+          name: r.name || r.customer?.name || r.customerName || 'Shack Guest',
           email: r.email || r.customer?.email || '',
           phone: r.phone || r.customer?.phone || '',
-          serviceCategory: r.serviceCategory || r.reservation?.seatingArea || 'Historic Devon House Verandah',
-          detailedService: r.detailedService || `${r.reservation?.partySize || '2 Guests'} • ${r.reservation?.occasion || 'Table Reservation'}`,
+          serviceCategory: r.serviceCategory || (r.fulfillmentType ? (r.fulfillmentType === 'curbside_pickup' ? 'Curbside Car Carryout' : 'Picnic Grounds Table') : 'Shack Carryout'),
+          detailedService: r.detailedService || r.itemsDescription || (r.items ? `${r.items.length} items • $${r.total?.toFixed(2) || '0.00'}` : 'Online Carryout Order'),
           createdAt: r.createdAt || r.created_at || r.submittedAt || new Date().toISOString(),
           submittedAt: r.submittedAt || r.createdAt || new Date().toISOString(),
           status: r.status || 'pending',
-          details: r.details || (r.reservation ? `Dining Date: ${r.reservation.date} at ${r.reservation.timeSlot}` : ''),
-          customIssue: r.customIssue || r.reservation?.culinaryNotes || '',
-          propertyType: r.propertyType || r.reservation?.partySize || '',
-          location: r.location || r.reservation?.seatingArea || 'Devon House Verandah'
+          details: r.details || (r.itemsDescription ? `Order Items: ${r.itemsDescription}. Total: $${r.total?.toFixed(2) || '0.00'}` : (r.reservation ? `Dining Date: ${r.reservation.date} at ${r.reservation.timeSlot}` : '')),
+          customIssue: r.customIssue || r.specialInstructions || r.notes || '',
+          propertyType: r.propertyType || (r.vehicleInfo ? `Car: ${r.vehicleInfo}` : (r.tableNumber ? `Table #${r.tableNumber}` : 'Carryout Counter')),
+          location: r.location || '420 W Colonial Hwy, Hamilton, VA',
+          total: r.total,
+          subtotal: r.subtotal,
+          tax: r.tax,
+          tip: r.tip,
+          fulfillmentType: r.fulfillmentType
         }));
         setQuotes(normalized);
         setStats({
           total: normalized.length,
           pending: normalized.filter(q => q.status === 'pending' || !q.status).length,
-          quoted: normalized.filter(q => q.status === 'quoted').length,
-          completed: normalized.filter(q => q.status === 'completed').length
+          quoted: normalized.filter(q => q.status === 'quoted' || q.status === 'steaming').length,
+          completed: normalized.filter(q => q.status === 'completed' || q.status === 'ready').length
         });
       } catch (e) {
         console.error(e);

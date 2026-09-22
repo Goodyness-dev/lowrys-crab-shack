@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { imageManifest } from '../../data/imageManifest';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 
 export default function ChefAndReviewsSection({ onOpenWizard }) {
+  const { openCustomizer } = useCart();
   const [activeReviewIdx, setActiveReviewIdx] = useState(0);
 
   const reviews = BUSINESS_INFO.reviews;
@@ -59,14 +61,18 @@ export default function ChefAndReviewsSection({ onOpenWizard }) {
               </p>
             </div>
 
-            <a
-              href={BUSINESS_INFO.onlineOrderingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => openCustomizer({
+                name: 'Steamed Chesapeake Blue Crabs',
+                price: '$42.00',
+                image: imageManifest.features.heritage,
+                badge: 'Lowry Family Heritage'
+              })}
               className="rounded-full bg-crab-600 hover:bg-crab-700 text-white px-6 py-2.5 text-xs font-bold uppercase tracking-wider shadow-sm transition active:scale-95 cursor-pointer"
             >
-              Order Online
-            </a>
+              Order Online (0% Fees)
+            </button>
           </div>
         </div>
 

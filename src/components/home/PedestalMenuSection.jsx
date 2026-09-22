@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { imageManifest } from '../../data/imageManifest';
 import { BUSINESS_INFO } from '../../data/businessData';
+import { useCart } from '../../context/CartContext';
 import { gsap } from 'gsap';
 
 export default function PedestalMenuSection({ onOpenWizard, onViewAllServices }) {
+  const { openCustomizer } = useCart();
   const [activeItem, setActiveItem] = useState(0);
   const cardsContainerRef = useRef(null);
 
@@ -140,16 +142,22 @@ export default function PedestalMenuSection({ onOpenWizard, onViewAllServices })
                     <span className="font-mono text-[11px] text-crab-600 font-semibold">
                       {plate.notes}
                     </span>
-                    <a 
-                      href={BUSINESS_INFO.onlineOrderingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-crab-600 font-bold hover:text-crab-800 hover:underline flex items-center space-x-1"
+                    <button 
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openCustomizer({
+                          name: plate.name,
+                          price: plate.price === 'Market Price' ? '$42.00' : plate.price,
+                          image: plate.image,
+                          badge: plate.course
+                        });
+                      }}
+                      className="text-crab-600 font-bold hover:text-crab-800 hover:underline flex items-center space-x-1 cursor-pointer"
                     >
-                      <span>Order on Talech</span>
+                      <span>Customize & Order</span>
                       <span>→</span>
-                    </a>
+                    </button>
                   </div>
                 </div>
 
@@ -168,14 +176,18 @@ export default function PedestalMenuSection({ onOpenWizard, onViewAllServices })
           VIEW FULL SHACK MENU
         </button>
 
-        <a
-          href={BUSINESS_INFO.onlineOrderingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => openCustomizer({
+            name: 'Steamed Chesapeake Bay Blue Crabs',
+            price: '$42.00',
+            image: imageManifest.pedestals[0].image,
+            badge: 'Chesapeake Daily Catch'
+          })}
           className="rounded-full bg-crab-600 hover:bg-crab-700 text-white font-bold px-7 py-3 text-xs uppercase tracking-[0.18em] transition-all duration-300 shadow-md active:scale-95 cursor-pointer"
         >
-          ORDER CARRYOUT ONLINE
-        </a>
+          ORDER CARRYOUT ONLINE (0% FEES)
+        </button>
       </div>
 
     </div>
