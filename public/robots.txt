@@ -1,0 +1,24 @@
+# 2026 AI-Native Robots.txt for Lowry's Crab Shack
+User-agent: *
+Allow: /
+
+# Explicit AI Agent Crawler Permissions
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://lowrys-crab-shack.vercel.app/sitemap.xml

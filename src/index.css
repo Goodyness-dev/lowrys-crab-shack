@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#fdfbf7] text-slate-900 font-sans antialiased selection:bg-crab-600 selection:text-white;
+  }
+
+  h1, h2, h3, .font-serif-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
+    font-feature-settings: "liga" 1, "dlig" 1;
+  }
+
+  .font-display-title {
+    font-family: 'Oswald', 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Thick & Alive Design System: Crisp White Cards with Marine & Crab Accents */
+.card-thick {
+  background: #ffffff;
+  border: 2px solid rgba(226, 232, 240, 0.95);
+  border-radius: 1.75rem;
+  box-shadow: 
+    0 20px 45px -12px rgba(12, 74, 110, 0.10),
+    0 8px 18px -4px rgba(220, 38, 38, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-thick-hover {
+  background: #ffffff;
+  border: 2px solid rgba(226, 232, 240, 0.95);
+  border-radius: 1.75rem;
+  box-shadow: 
+    0 20px 45px -12px rgba(12, 74, 110, 0.10),
+    0 8px 18px -4px rgba(220, 38, 38, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-thick-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(220, 38, 38, 0.6);
+  box-shadow: 
+    0 30px 65px -14px rgba(12, 74, 110, 0.18),
+    0 12px 24px -6px rgba(220, 38, 38, 0.14);
+}
+
+/* Image Zoom and Clip Reveal */
+.img-hover-zoom {
+  overflow: hidden;
+}
+
+.img-hover-zoom img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-hover-zoom:hover img {
+  transform: scale(1.06);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0fdfa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #99f6e4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5eead4;
+}
